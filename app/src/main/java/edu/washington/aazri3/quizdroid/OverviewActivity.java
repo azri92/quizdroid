@@ -6,39 +6,42 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.TextView;
 
-public class MainActivity extends ActionBarActivity {
+
+public class OverviewActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_overview);
 
-        ListView listView = (ListView) findViewById(R.id.listView);
-        String[] titles = new String[] {"Math", "Physics", "Marvel Super Heroes", "Dota 2"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                titles);
-        listView.setAdapter(adapter);
+        String topic = getIntent().getStringExtra("topic");
+        final Quiz quiz = new Quiz(topic);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        TextView txtTopic = (TextView) findViewById(R.id.txtTopic);
+        txtTopic.setText(topic);
+
+        TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
+        txtDescription.setText(quiz.getDescription());
+
+        Button btnBegin = (Button) findViewById(R.id.btnBegin);
+        btnBegin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final String item = (String) adapterView.getItemAtPosition(i);
-                Intent next = new Intent(getApplicationContext(), OverviewActivity.class);
-                next.putExtra("topic", item);
+            public void onClick(View view) {
+                Intent next = new Intent(getApplicationContext(), QuestionActivity.class);
+                next.putExtra("quiz", quiz);
                 startActivity(next);
             }
         });
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_overview, menu);
         return true;
     }
 
