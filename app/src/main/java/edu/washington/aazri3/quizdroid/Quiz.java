@@ -10,13 +10,13 @@ import java.util.Map;
  * Created by AzriABA.
  */
 public class Quiz implements Serializable {
-    public static final int OPTIONS = 4;
     private final String topic;
     private String description;
     private List<String> questions;
-    private List<String> answers;
+    private List<Integer> answers;
     private Map<String, String[]> options;
     private int currentQuestion;
+    private int correctAnswers;
 
     public Quiz(String topic) {
         this.topic = topic;
@@ -37,46 +37,46 @@ public class Quiz implements Serializable {
                 dotaInit();
                 break;
         }
-        goodLuckTxt();
+        endText();
         currentQuestion = 0;
+        correctAnswers = 0;
     }
 
     private void mathInit() {
         description = "Questions involve simple Math that you should be able to calculate " +
                 "in your head.";
-        addQuestion("123 + 456 =", "579", new String[]{"123456", "569", "579", "654321"});
+        addQuestion("123 + 456 =", 2, new String[]{"123456", "569", "579", "654321"});
+        addQuestion("100 - -10 =", 0, new String[]{"110", "101", "100", "001"});
     }
 
     private void physicsInit() {
         description = "Questions involve simple high school Physics concepts, save for some " +
                 "special picks ;)";
-        addQuestion("Newton's Laws of Motion are all these except..",
-                "A student will remain in bed unless acted upon by a large enough panic",
-                new String[]{"Law of Inertia",
-                        "F = ma",
-                        "For every action there is an equal and opposite reaction.",
+        addQuestion("Newton's Laws of Motion are all these except..", 3, new String[]{"Law of Inertia",
+                        "F = ma", "For every action there is an equal and opposite reaction.",
                         "A student will remain in bed unless acted upon by a large enough panic"});
     }
 
     private void marvelInit() {
         description = "Questions involve general knowledge on Marvel Super Heroes. Get yourself " +
                 "prepared before watching Avengers (if you haven't).";
-        addQuestion("What made Stephen Rogers the Captain America?", "Drugs",
+        addQuestion("What made Stephen Rogers the Captain America?", 2,
                 new String[]{"Training", "Talent", "Drugs", "Patriotism"});
     }
 
     private void dotaInit() {
         description = "If you've played more than 200 hours of Dota 2, you should at least know " +
                 "these.";
-        addQuestion("What item should you get when you're a carry against a Phantom Assassin?", "MKB",
+        addQuestion("What item should you get when you're a carry against a Phantom Assassin?", 1,
                 new String[]{"BKB", "MKB", "Branch", "Dagon"});
     }
 
-    private void goodLuckTxt() {
-        description += "\n\nPress \"BEGIN\" to start. Good luck!";
+    private void endText() {
+        description += "\n\nNumber of Questions: " + questions.size() +
+                "\n\nPress \"BEGIN\" to start. Good luck!";
     }
 
-    private void addQuestion(String question, String answer, String[] option) {
+    private void addQuestion(String question, int answer, String[] option) {
         questions.add(question);
         answers.add(answer);
         options.put(question, option);
@@ -90,7 +90,7 @@ public class Quiz implements Serializable {
         return questions.get(i);
     }
 
-    public String getAnswer(int i) {
+    public int getAnswer(int i) {
         return answers.get(i);
     }
 
@@ -110,4 +110,19 @@ public class Quiz implements Serializable {
         currentQuestion++;
     }
 
+    public boolean isCorrect(int chosenAnswer) {
+        return answers.get(currentQuestion) == chosenAnswer;
+    }
+
+    public void answeredCorrectly() {
+        correctAnswers++;
+    }
+
+    public int getCorrectAnswers() {
+        return correctAnswers;
+    }
+
+    public boolean isLastQuestion() {
+        return currentQuestion == (questions.size() - 1);
+    }
 }

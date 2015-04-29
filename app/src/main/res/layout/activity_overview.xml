@@ -24,7 +24,8 @@
         android:id="@+id/txtDescription"
         android:layout_below="@+id/txtTopic"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp"/>
 
     <Button
         android:layout_width="wrap_content"

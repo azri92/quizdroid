@@ -7,5 +7,9 @@
 
     <string name="title_activity_overview">Overview</string>
     <string name="begin">Begin</string>
-    <string name="title_activity_question">QuestionActivity</string>
+
+    <string name="title_activity_question">Question</string>
+    <string name="submit">Submit</string>
+
+    <string name="title_activity_answer">Answer</string>
 </resources>

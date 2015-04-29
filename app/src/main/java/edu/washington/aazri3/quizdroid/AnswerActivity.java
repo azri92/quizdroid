@@ -8,13 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 
-public class QuestionActivity extends ActionBarActivity {
+public class AnswerActivity extends ActionBarActivity {
     Button btnSubmit;
-    private int chosenAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +20,11 @@ public class QuestionActivity extends ActionBarActivity {
         setContentView(R.layout.activity_question);
 
         final Quiz quiz = (Quiz) getIntent().getSerializableExtra("quiz");
+        int chosenAnswer = getIntent().getIntExtra("chosenAnswer", 0);
 
         TextView txtQuestion = (TextView) findViewById(R.id.txtQuestion);
         int currentQuestion = quiz.currentQuestion();
-        setTitle("Question " + (currentQuestion + 1));
+        setTitle("Answer " + (currentQuestion + 1));
         txtQuestion.setText(quiz.getQuestion(currentQuestion));
 
         String[] options = quiz.getOptions(currentQuestion);
@@ -35,37 +34,47 @@ public class QuestionActivity extends ActionBarActivity {
             int radioID = getResources().getIdentifier(id, "id", getPackageName());
             RadioButton radioButton = (RadioButton) findViewById(radioID);
             radioButton.setText(options[i]);
+            if (i == chosenAnswer) {
+                radioButton.setChecked(true);
+            } else {
+                radioButton.setEnabled(false);
+            }
         }
 
+        TextView score = (TextView) findViewById(R.id.score);
+        score.setText("You have " + quiz.getCorrectAnswers() + " out of " + quiz.numberOfQuestions() +
+            " correct.");
+        score.setVisibility(View.VISIBLE);
+
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
-        btnSubmit.setVisibility(View.GONE);
+        if (quiz.isLastQuestion()) {
+            btnSubmit.setText("FINISH");
+        } else {
+            btnSubmit.setText("NEXT");
+        }
+
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (quiz.isCorrect(chosenAnswer)) {
-                    quiz.answeredCorrectly();
+                if (!quiz.isLastQuestion()) {
+                    quiz.nextQuestion();
+                    Intent next = new Intent(getApplicationContext(), QuestionActivity.class);
+                    next.putExtra("quiz", quiz);
+                    startActivity(next);
+                } else {
+                    Intent next = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(next);
                 }
-
-                Intent next = new Intent(getApplicationContext(), AnswerActivity.class);
-                next.putExtra("quiz", quiz);
-                next.putExtra("chosenAnswer", chosenAnswer);
-                startActivity(next);
             }
         });
 
-    }
-
-    public void onClickRadio(View view) {
-        btnSubmit.setVisibility(View.VISIBLE);
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.grpRadio);
-        chosenAnswer = radioGroup.indexOfChild(view);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_question, menu);
+        getMenuInflater().inflate(R.menu.menu_answer, menu);
         return true;
     }
 
