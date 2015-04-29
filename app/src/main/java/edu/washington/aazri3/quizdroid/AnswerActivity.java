@@ -1,6 +1,7 @@
 package edu.washington.aazri3.quizdroid;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -36,13 +37,19 @@ public class AnswerActivity extends ActionBarActivity {
             radioButton.setText(options[i]);
             if (i == chosenAnswer) {
                 radioButton.setChecked(true);
+                if (i == quiz.getAnswer(currentQuestion)) {
+                    radioButton.setBackgroundColor(Color.GREEN);
+                }
             } else {
                 radioButton.setEnabled(false);
+                if (i == quiz.getAnswer(currentQuestion)) {
+                    radioButton.setBackgroundColor(Color.RED);
+                }
             }
         }
 
         TextView score = (TextView) findViewById(R.id.score);
-        score.setText("You have " + quiz.getCorrectAnswers() + " out of " + quiz.numberOfQuestions() +
+        score.setText("You have " + quiz.getCorrectAnswers() + " out of " + (currentQuestion + 1) +
             " correct.");
         score.setVisibility(View.VISIBLE);
 
@@ -65,11 +72,17 @@ public class AnswerActivity extends ActionBarActivity {
                     Intent next = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(next);
                 }
+                finish();
             }
         });
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+        return;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

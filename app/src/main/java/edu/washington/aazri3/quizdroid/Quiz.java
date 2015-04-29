@@ -47,6 +47,7 @@ public class Quiz implements Serializable {
                 "in your head.";
         addQuestion("123 + 456 =", 2, new String[]{"123456", "569", "579", "654321"});
         addQuestion("100 - -10 =", 0, new String[]{"110", "101", "100", "001"});
+        addQuestion("908 + 890 = ", 2, new String[]{"1234", "1900", "1798", "1978"});
     }
 
     private void physicsInit() {

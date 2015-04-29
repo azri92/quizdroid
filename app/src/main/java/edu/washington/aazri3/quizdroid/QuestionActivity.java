@@ -35,6 +35,12 @@ public class QuestionActivity extends ActionBarActivity {
             int radioID = getResources().getIdentifier(id, "id", getPackageName());
             RadioButton radioButton = (RadioButton) findViewById(radioID);
             radioButton.setText(options[i]);
+            radioButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onClickRadio(view);
+                }
+            });
         }
 
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
@@ -50,9 +56,16 @@ public class QuestionActivity extends ActionBarActivity {
                 next.putExtra("quiz", quiz);
                 next.putExtra("chosenAnswer", chosenAnswer);
                 startActivity(next);
+                finish();
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        return;
     }
 
     public void onClickRadio(View view) {
