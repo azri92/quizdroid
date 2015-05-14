@@ -37,6 +37,28 @@ In this part, switch from using Activities to Fragments
 * screenshot of app running on emulator
     * pic or screenshot or movie of app running on a device
     * We will clone and build it from the GH repo
-    * 5 points, one for each satisfied story from the previous (pt1) version of the assignment refactored to use fragments
-* BONUS
-    * use animation transitions to "slide" the fragments and and out; when going from question to answer, for example, slide the answer fragment in from the right towards the left. (1 pt)
+* 5 points, one for each satisfied story from the previous (pt1) version of the assignment refactored to use fragments
+
+## BONUS
+* use animation transitions to "slide" the fragments and and out; when going from question to answer, for example, slide the answer fragment in from the right towards the left. (1 pt)
+
+# PART 3
+
+## Stories
+* Create a class called QuizApp extending android.app.Application and make sure it is referenced from the app manifest; override the onCreate() method to emit a message to the diagnostic log to ensure it is being loaded and run
+* Use the "Repository" pattern to create a TopicRepository interface; create one implementation that simply stores elements in memory from a hard-coded list initialized on startup. Create domain objects for Topic and Quiz, where a Quiz is question text, four answers, and an integer saying which of the four answers is correct, and Topic is a title, short description, long description, and a collection of Question objects.
+* Make the QuizApp object a singleton, and provide a method for accessing the TopicRepository.
+* Refactor the activities in the application to use the TopicRepository. On the topic list page, the title and the short description should come from the similar fields in the Topic object. On the topic overview page, the title and long description should come from the similar fields in the Topic object. The Question object should be similarly easy to match up to the UI.
+* Refactor the TopicRepository to read a JSON file ("assets/questions.json") to use as the source of the Topics and Questions. Use a hard-coded file (available at http://tednewardsandbox.site44.com/questions.json).
+
+## Grading
+* All your code should be in a GitHub repo under your account
+    * repo should be called 'quizdroid' in branch called 'part3'
+    * repo should contain all necessary build artifacts
+* include a directory called "screenshots", including:
+    * screenshot of app running on emulator
+    * pic or screenshot or movie of app running on a device
+
+## BONUS
+* In the next part, we will need this application to need to access the Internet, among other things. Look through the list of permissions in the Android documentation, and add uses-permission elements as necessary to enable that now. (1 pt)
+* Refactor the domain model so that Topics can have an icon to go along with the title and descriptions. (Use the stock Android icon for now if you don't want to test your drawing skills.) Refactor the topic list ListView to use the icon as part of the layout for each item in the list view. Display the icon on the topic overview page.
