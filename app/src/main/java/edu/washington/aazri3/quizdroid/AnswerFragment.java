@@ -18,7 +18,6 @@ import android.widget.TextView;
 public class AnswerFragment extends Fragment {
 
     private QuizFragmentInterface mCallback;
-    private Button btnSubmit;
 
     public AnswerFragment() {
     }
@@ -27,15 +26,14 @@ public class AnswerFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final Quiz quiz = mCallback.getQuiz();
         int chosenAnswer = mCallback.getChosenAnswer();
 
         TextView txtQuestion = (TextView) getActivity().findViewById(R.id.txtQuestion);
-        int currentQuestion = quiz.currentQuestion();
+        int currentQuestion = QuizApp.getInstance().getRepository().currentQuestion();
         getActivity().setTitle("Answer " + (currentQuestion + 1));
-        txtQuestion.setText(quiz.getQuestion(currentQuestion));
+        txtQuestion.setText(QuizApp.getInstance().getRepository().getQuestion());
 
-        String[] options = quiz.getOptions(currentQuestion);
+        String[] options = QuizApp.getInstance().getRepository().getOptions();
 
         for (int i = 0; i < options.length; i++) {
             String id = "radio" + i;
@@ -44,24 +42,24 @@ public class AnswerFragment extends Fragment {
             radioButton.setText(options[i]);
             if (i == chosenAnswer) {
                 radioButton.setChecked(true);
-                if (i == quiz.getAnswer(currentQuestion)) {
+                if (i == QuizApp.getInstance().getRepository().getAnswer()) {
                     radioButton.setBackgroundColor(Color.GREEN);
                 }
             } else {
                 radioButton.setEnabled(false);
-                if (i == quiz.getAnswer(currentQuestion)) {
+                if (i == QuizApp.getInstance().getRepository().getAnswer()) {
                     radioButton.setBackgroundColor(Color.RED);
                 }
             }
         }
 
         TextView score = (TextView) getActivity().findViewById(R.id.score);
-        score.setText("You have " + quiz.getCorrectAnswers() + " out of " + (currentQuestion + 1) +
-                " correct.");
+        score.setText("You have " + QuizApp.getInstance().getRepository().getCorrectAnswers() +
+                " out of " + (currentQuestion + 1) + " correct.");
         score.setVisibility(View.VISIBLE);
 
-        btnSubmit = (Button) getActivity().findViewById(R.id.btnSubmit);
-        if (quiz.isLastQuestion()) {
+        Button btnSubmit = (Button) getActivity().findViewById(R.id.btnSubmit);
+        if (QuizApp.getInstance().getRepository().isLastQuestion()) {
             btnSubmit.setText("FINISH");
         } else {
             btnSubmit.setText("NEXT");
@@ -70,11 +68,11 @@ public class AnswerFragment extends Fragment {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!quiz.isLastQuestion()) {
-                    quiz.nextQuestion();
-                    mCallback.updateQuiz(quiz);
+                if (!QuizApp.getInstance().getRepository().isLastQuestion()) {
+                    QuizApp.getInstance().getRepository().nextQuestion();
                     mCallback.onButtonClicked("next");
                 } else {
+                    QuizApp.getInstance().getRepository().reset();
                     mCallback.onButtonClicked("finish");
                 }
             }

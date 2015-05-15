@@ -1,15 +1,14 @@
 package edu.washington.aazri3.quizdroid;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
+
+import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -19,17 +18,18 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         ListView listView = (ListView) findViewById(R.id.listView);
-        String[] titles = new String[] {"Math", "Physics", "Marvel Super Heroes", "Dota 2"};
+        List<String> topics = QuizApp.getInstance().getRepository().getTopicList();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                titles);
+                topics);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final String item = (String) adapterView.getItemAtPosition(i);
+                final String chosenTopic = (String) adapterView.getItemAtPosition(i);
+                QuizApp.getInstance().getRepository().setTopic(chosenTopic);
+
                 Intent next = new Intent(getApplicationContext(), QuizActivity.class);
-                next.putExtra("topic", item);
                 startActivity(next);
             }
         });

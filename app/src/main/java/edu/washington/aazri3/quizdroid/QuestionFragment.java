@@ -1,10 +1,8 @@
 package edu.washington.aazri3.quizdroid;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,13 +28,12 @@ public class QuestionFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final Quiz quiz = mCallback.getQuiz();
         TextView txtQuestion = (TextView) getActivity().findViewById(R.id.txtQuestion);
-        int currentQuestion = quiz.currentQuestion();
+        int currentQuestion = QuizApp.getInstance().getRepository().currentQuestion();
         getActivity().setTitle("Question " + (currentQuestion + 1));
-        txtQuestion.setText(quiz.getQuestion(currentQuestion));
+        txtQuestion.setText(QuizApp.getInstance().getRepository().getQuestion());
 
-        String[] options = quiz.getOptions(currentQuestion);
+        String[] options = QuizApp.getInstance().getRepository().getOptions();
 
         for (int i = 0; i < options.length; i++) {
             String id = "radio" + i;
@@ -56,12 +53,11 @@ public class QuestionFragment extends Fragment {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (quiz.isCorrect(chosenAnswer)) {
-                    quiz.answeredCorrectly();
+                if (QuizApp.getInstance().getRepository().isCorrect(chosenAnswer)) {
+                    QuizApp.getInstance().getRepository().answeredCorrectly();
                 }
 
                 mCallback.updateChosenAnswer(chosenAnswer);
-                mCallback.updateQuiz(quiz);
                 mCallback.onButtonClicked("submit");
             }
         });

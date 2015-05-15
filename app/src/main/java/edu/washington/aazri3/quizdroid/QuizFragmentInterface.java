@@ -7,10 +7,6 @@ public interface QuizFragmentInterface {
 
     void onButtonClicked(String type);
 
-    Quiz getQuiz();
-
-    void updateQuiz(Quiz quiz);
-
     void updateChosenAnswer(int answer);
 
     int getChosenAnswer();

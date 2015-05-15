@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 
 /**
- * Display Quiz overview.
+ * Display QuizRepo overview.
  */
 public class OverviewFragment extends Fragment {
 
@@ -24,14 +24,11 @@ public class OverviewFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        String topic = this.getArguments().getString("topic");
         TextView txtTopic = (TextView) getActivity().findViewById(R.id.txtTopic);
-        txtTopic.setText(topic);
-
-        Quiz quiz = mCallback.getQuiz();
+        txtTopic.setText(QuizApp.getInstance().getRepository().getTopic());
 
         TextView txtDescription = (TextView) getActivity().findViewById(R.id.txtDescription);
-        txtDescription.setText(quiz.getDescription());
+        txtDescription.setText(QuizApp.getInstance().getRepository().getLongDesc());
 
         Button btnBegin = (Button) getActivity().findViewById(R.id.btnBegin);
         btnBegin.setOnClickListener(new View.OnClickListener() {
