@@ -1,12 +1,17 @@
 package edu.washington.aazri3.quizdroid;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -19,8 +24,7 @@ public class MainActivity extends ActionBarActivity {
 
         ListView listView = (ListView) findViewById(R.id.listView);
         List<String> topics = QuizApp.getInstance().getRepository().getTopicList();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                topics);
+        ArrayAdapter<String> adapter = new CustomListAdapter(topics);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -39,6 +43,33 @@ public class MainActivity extends ActionBarActivity {
     public void onBackPressed() {
 
         return;
+    }
+
+    class CustomListAdapter extends ArrayAdapter<String> {
+        private List<String> topicList;
+
+        public CustomListAdapter(List<String> topicList) {
+            super(getApplicationContext(), R.layout.custom_listview, topicList);
+
+            this.topicList = topicList;
+        }
+
+        public View getView(int position,View view,ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.custom_listview, parent, false);
+
+            ImageView imgIcon = (ImageView) rowView.findViewById(R.id.imgIcon);
+            TextView txtTopic = (TextView) rowView.findViewById(R.id.txtTopic);
+
+            txtTopic.setText(topicList.get(position));
+
+            String id = QuizApp.getInstance().getRepository().getIcon(topicList.get(position));
+            int imgID = getResources().getIdentifier(id, "mipmap", getPackageName());
+            imgIcon.setImageResource(imgID);
+
+            return rowView;
+
+        }
     }
 
 //    @Override

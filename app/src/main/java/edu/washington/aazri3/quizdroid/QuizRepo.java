@@ -59,8 +59,8 @@ public class QuizRepo implements TopicRepository {
         return topic.getTitle();
     }
 
-    public String getIcon() {
-        return topic.getIcon();
+    public String getIcon(String topic) {
+        return "ic_launcher";
     }
 
     public String getShortDesc() {

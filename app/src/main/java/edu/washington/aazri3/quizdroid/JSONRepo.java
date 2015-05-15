@@ -85,8 +85,8 @@ public class JSONRepo implements TopicRepository {
         return currTopic;
     }
 
-    public String getIcon() {
-        return topics.get(currTopic).getIcon();
+    public String getIcon(String topic) {
+        return topics.get(topic).getIcon();
     }
 
     public String getShortDesc() {

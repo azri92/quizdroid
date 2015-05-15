@@ -14,7 +14,7 @@ public interface TopicRepository  {
 
     String getTopic();
 
-    String getIcon();
+    String getIcon(String topic);
 
     String getShortDesc();
 
