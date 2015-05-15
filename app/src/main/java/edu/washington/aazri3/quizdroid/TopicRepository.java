@@ -3,7 +3,7 @@ package edu.washington.aazri3.quizdroid;
 import java.util.List;
 
 /**
- *
+ * Interface for repositories.
  */
 
 public interface TopicRepository  {

@@ -142,7 +142,7 @@ public class QuizRepo implements TopicRepository {
                 "prepared before watching Avengers (if you haven't).");
         topic.addQuestion("What made Stephen Rogers the Captain America?", 2,
                 new String[]{"Training", "Talent", "Drugs", "Patriotism"});
-        topic.addQuestion("How did Iron Man's mansion get attacked by the bad guys in Iron Man 2?", 3,
+        topic.addQuestion("How did Iron Man's mansion get attacked by the bad guys in Iron Man 2?", 2,
                 new String[]{"They followed Iron Man home.", "They put a tracker on Iron Man.",
                 "Iron Man gave his address on TV.", "Everyone knew Iron Man's address the whole time."});
     }

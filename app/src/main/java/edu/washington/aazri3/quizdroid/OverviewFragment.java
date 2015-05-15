@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 
 /**
- * Display QuizRepo overview.
+ * Display quiz overview.
  */
 public class OverviewFragment extends Fragment {
 

@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 
 /**
- * A placeholder fragment containing a simple view.
+ * Handles the answer view of quiz.
  */
 public class AnswerFragment extends Fragment {
 
