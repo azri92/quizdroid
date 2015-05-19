@@ -3,6 +3,8 @@ package edu.washington.aazri3.quizdroid;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 
 public class QuizActivity extends ActionBarActivity implements QuizFragmentInterface {
@@ -46,7 +48,7 @@ public class QuizActivity extends ActionBarActivity implements QuizFragmentInter
                 QuestionFragment questionFragment = new QuestionFragment();
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.push_up_in, 0, 0, R.anim.push_up_out)
-                        .replace(R.id.fragment_container, questionFragment).commit();
+                        .replace(R.id.fragment_container, questionFragment, "questionFragment").commit();
                 break;
             case "submit":
                 AnswerFragment answerFragment = new AnswerFragment();
@@ -80,8 +82,33 @@ public class QuizActivity extends ActionBarActivity implements QuizFragmentInter
 
     @Override
     public void onBackPressed() {
+        QuestionFragment questionFragment = (QuestionFragment) getSupportFragmentManager().findFragmentByTag("questionFragment");
+        if(questionFragment != null && questionFragment.isVisible()) {
+            super.onBackPressed();
+        }
         return;
     }
 
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.preferences) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 }

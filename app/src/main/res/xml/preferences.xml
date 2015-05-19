@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/title_download_manager">
+
+        <EditTextPreference
+            android:key="url_pref"
+            android:title="@string/title_url_pref"
+            android:summary="@string/summary_url_pref"
+            android:dialogTitle="@string/title_url_pref" />
+
+        <EditTextPreference
+            android:key="interval_pref"
+            android:title="@string/title_interval_pref"
+            android:summary="@string/summary_interval_pref"
+            android:dialogTitle="dialog title"
+            android:inputType="numberSigned"
+            android:dependency="url_pref"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>
