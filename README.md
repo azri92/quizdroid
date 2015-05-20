@@ -62,3 +62,11 @@ In this part, switch from using Activities to Fragments
 ## BONUS
 * In the next part, we will need this application to need to access the Internet, among other things. Look through the list of permissions in the Android documentation, and add uses-permission elements as necessary to enable that now. (1 pt)
 * Refactor the domain model so that Topics can have an icon to go along with the title and descriptions. (Use the stock Android icon for now if you don't want to test your drawing skills.) Refactor the topic list ListView to use the icon as part of the layout for each item in the list view. Display the icon on the topic overview page.
+
+# PART 4
+
+Now we will write the code to check the questions periodically, store the data, and allow for preferences
+
+## Tasks:
+* The application should provide a "Preferences" action bar item that brings up a "Preferences" activity containing the application's configurable settings: URL to use for question data, and how often to check for new downloads measured in minutes. If a download is currently under way, these settings should not take effect until the next download starts.
+* The application should create some background operation (Thread, AlarmManager or Service) that will (eventually) attempt to download a JSON file containing the questions from the server every "N" minutes/hours. For now, pop a Toast message displaying the URL that will eventually be hit. Make sure this URL is what's defined in the Preferences.
