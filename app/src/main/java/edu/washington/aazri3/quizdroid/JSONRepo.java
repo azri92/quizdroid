@@ -55,7 +55,6 @@ public class JSONRepo implements TopicRepository {
                     int answer = q.getInt("answer") - 1;
                     String[] options = new String[4];
                     JSONArray answers = q.getJSONArray("answers");
-                    Log.d(TAG, "Number of answers " + answers.length());
                     for (int k = 0; k < answers.length(); k++) {
                         options[k] = answers.getString(k);
                     }

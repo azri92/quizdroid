@@ -19,7 +19,7 @@ public class QuizApp extends Application {
     private static QuizApp instance;
 //    private static QuizRepo repository;
     private static JSONRepo repository;
-
+    private long currentDownloadID;
 
     @Override
     public void onCreate() {
@@ -61,5 +61,13 @@ public class QuizApp extends Application {
         inputStream.close();
 
         return new String(buffer, "UTF-8");
+    }
+
+    public void setCurrentDownloadID(long downloadID) {
+        currentDownloadID = downloadID;
+    }
+
+    public long getCurrentDownloadID() {
+        return currentDownloadID;
     }
 }

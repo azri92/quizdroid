@@ -36,7 +36,7 @@ public class QuizActivity extends ActionBarActivity implements QuizFragmentInter
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, overviewFragment).commit();
+                    .add(R.id.fragment_container, overviewFragment, "overviewFragment").commit();
             setTitle("Overview");
         }
     }
@@ -82,7 +82,7 @@ public class QuizActivity extends ActionBarActivity implements QuizFragmentInter
 
     @Override
     public void onBackPressed() {
-        QuestionFragment questionFragment = (QuestionFragment) getSupportFragmentManager().findFragmentByTag("questionFragment");
+        OverviewFragment questionFragment = (OverviewFragment) getSupportFragmentManager().findFragmentByTag("overviewFragment");
         if(questionFragment != null && questionFragment.isVisible()) {
             super.onBackPressed();
         }
