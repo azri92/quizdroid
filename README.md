@@ -67,6 +67,15 @@ In this part, switch from using Activities to Fragments
 
 Now we will write the code to check the questions periodically, store the data, and allow for preferences
 
-## Tasks:
+## Tasks
 * The application should provide a "Preferences" action bar item that brings up a "Preferences" activity containing the application's configurable settings: URL to use for question data, and how often to check for new downloads measured in minutes. If a download is currently under way, these settings should not take effect until the next download starts.
 * The application should create some background operation (Thread, AlarmManager or Service) that will (eventually) attempt to download a JSON file containing the questions from the server every "N" minutes/hours. For now, pop a Toast message displaying the URL that will eventually be hit. Make sure this URL is what's defined in the Preferences.
+
+# PART 5
+
+Now we will download the topics and questions from a server
+
+## Tasks  
+* The background operation implemented previously should now attempt to download the JSON file specified in the Preferences URL. Save this data to a local file as "questions.json". Make sure that this file always remains in a good state--if the download fails or is interrupted, the previous file should remain in place.
+* As a user, if I am currently offline (in Airplane mode or in a no-bars area) the application should display a message telling me I have no access to the Internet. If I am in airplane mode, it should ask if I want to turn airplane mode off and take me to the Settings activity to do so. If I simply have no signal, it should just punt gracefully with a nice error message.
+* As a user, if the download of the questions fails, the application should tell me and ask if I want to retry or quit the application and try again later.
