@@ -40,6 +40,9 @@ public class JSONRepo implements TopicRepository {
     }
 
     public void processJSON(JSONArray json) {
+        topicList.clear();
+        topics.clear();
+        reset(); // just in case
         try {
             for (int i = 0; i < json.length(); i++) {
                 JSONObject jsonObject = json.getJSONObject(i);

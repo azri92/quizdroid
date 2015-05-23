@@ -32,6 +32,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.washington.aazri3.quizdroid.MainActivity" />
         </activity>
+        <activity
+            android:name=".DialogActivity"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar" />
 
         <receiver
             android:name=".AlarmReceiver"

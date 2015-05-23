@@ -14,12 +14,13 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.i("AlarmReceiver", "Broadcast received.");
 
-//        Intent downloadServiceIntent = new Intent(context, DownloadService.class);
-//        context.startService(downloadServiceIntent);
+        Intent downloadServiceIntent = new Intent(context, DownloadService.class);
+        downloadServiceIntent.putExtra("url", intent.getStringExtra("url"));
+        context.startService(downloadServiceIntent);
 
-        if (intent.getAction().equals("edu.washington.aazri3.quizdroid.download")) {
-            String msg = intent.getStringExtra("url");
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-        }
+//        if (intent.getAction().equals("edu.washington.aazri3.quizdroid.download")) {
+//            String msg = intent.getStringExtra("url");
+//            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+//        }
     }
 }

@@ -1,15 +1,19 @@
 package edu.washington.aazri3.quizdroid;
 
-import android.app.AlarmManager;
 import android.app.DownloadManager;
 import android.app.IntentService;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 public class DownloadService extends IntentService {
+    private static final String TAG = "DownloadService";
+
     private DownloadManager dm;
 
     public DownloadService() {
@@ -25,40 +29,46 @@ public class DownloadService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent workIntent) {
-        Log.i("DownloadService", "entered onHandleIntent()");
+    protected void onHandleIntent(Intent intent) {
 
-        // Specify the url you want to download here
-        String url = "http://www.EricCheeIsAwesome.com/data.json";
+        ConnectivityManager cm =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        // Start the download
-        dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        long downloadID = dm.enqueue(request);
-        QuizApp.getInstance().setCurrentDownloadID(downloadID);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = (activeNetwork != null && activeNetwork.isConnectedOrConnecting());
+        if (!isConnected) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                if (Settings.System.getInt(getApplicationContext().getContentResolver(),
+                        Settings.Global.AIRPLANE_MODE_ON, 0) != 0) {
+                    startDialogActivity("airplane");
+                } else {
+                    startDialogActivity("no connection");
+                }
+            } else {
+                if (Settings.System.getInt(getApplicationContext().getContentResolver(),
+                        Settings.System.AIRPLANE_MODE_ON, 0) != 0) {
+                    startDialogActivity("airplane");
+                } else {
+                    startDialogActivity("no connection");
+                }
+            }
+        } else {
+            // Specify the url you want to download here
+            String url = intent.getStringExtra("url");
+            Log.d("DownloadService", "URL to contact is " + url);
+
+            // Start the download
+            dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+            long downloadID = dm.enqueue(request);
+            QuizApp.getInstance().setCurrentDownloadID(downloadID);
+        }
     }
 
-    public static void startOrStopAlarm(Context context, boolean on) {
-        Log.i("DownloadService", "startOrStopAlarm on = " + on);
-
-        Intent alarmReceiverIntent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmReceiverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-
-        if (on) {
-            int refreshInterval = 5 * 60000; // 5 min x 60,000 milliseconds = total ms in 5 min
-
-            Log.i("DownloadService", "setting alarm to " + refreshInterval);
-
-            // Start the alarm manager to repeat
-            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), refreshInterval, pendingIntent);
-        }
-        else {
-            manager.cancel(pendingIntent);
-            pendingIntent.cancel();
-
-            Log.i("DownloadService", "Stopping alarm");
-        }
+    private void startDialogActivity(String reason) {
+        Intent intent = new Intent(getApplicationContext(), DialogActivity.class);
+        intent.putExtra("reason", reason);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

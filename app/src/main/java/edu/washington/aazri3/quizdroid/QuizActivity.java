@@ -31,7 +31,7 @@ public class QuizActivity extends ActionBarActivity implements QuizFragmentInter
             OverviewFragment overviewFragment = new OverviewFragment();
 
             // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
+            // intent, pass the Intent's extras to the fragment as arguments
             overviewFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout

@@ -21,8 +21,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
@@ -31,6 +41,8 @@ public class MainActivity extends ActionBarActivity {
 
     private DownloadManager dm;
     private final AlarmReceiver alarmReceiver = new AlarmReceiver();
+    private ListView listView;
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +51,17 @@ public class MainActivity extends ActionBarActivity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        // TODO: unregister receiver later
         registerReceiver(downloadReceiver, filter);
 
         registerReceiver(alarmReceiver, new IntentFilter("edu.washington.aazri3.quizdroid.download"));
 
-        ListView listView = (ListView) findViewById(R.id.listView);
+        updateUI();
+    }
+
+    private void updateUI() {
+        listView = (ListView) findViewById(R.id.listView);
         List<String> topics = QuizApp.getInstance().getRepository().getTopicList();
-        ArrayAdapter<String> adapter = new CustomListAdapter(topics);
+        adapter = new CustomListAdapter(topics);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -72,62 +87,103 @@ public class MainActivity extends ActionBarActivity {
 
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 Log.i(TAG, "Download-complete broadcast received.");
-                long downloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                long downloadID = QuizApp.getInstance().getCurrentDownloadID();
 
-                // if the downloadID exists
-                if (downloadID != 0) {
+                // if the downloadID is right
+                if (id == downloadID) {
 
                     // Check status
                     DownloadManager.Query query = new DownloadManager.Query();
                     query.setFilterById(downloadID);
                     Cursor c = dm.query(query);
-                    if(c.moveToFirst()) {
-                        int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                        Log.d("DM Sample","Status Check: " + status);
-                        switch(status) {
-                            case DownloadManager.STATUS_PAUSED:
-                            case DownloadManager.STATUS_PENDING:
-                            case DownloadManager.STATUS_RUNNING:
-                                break;
-                            case DownloadManager.STATUS_SUCCESSFUL:
-                                // The download-complete message said the download was "successfu" then run this code
-                                ParcelFileDescriptor file;
-                                StringBuffer strContent = new StringBuffer("");
+                    try {
+                        if (c.moveToFirst()) {
+                            int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                            switch (status) {
+                                case DownloadManager.STATUS_PAUSED:
+                                    Log.d(TAG, "Download Status - Paused");
+                                case DownloadManager.STATUS_PENDING:
+                                    Log.d(TAG, "Download Status - Pending");
+                                case DownloadManager.STATUS_RUNNING:
+                                    Log.d(TAG, "Download Status - Running");
+                                    break;
+                                case DownloadManager.STATUS_SUCCESSFUL:
+                                    // The download-complete message said the download was "successfu" then run this code
+                                    ParcelFileDescriptor downloadedFile;
+                                    try {
+                                        // Get file from Download Manager
+                                        downloadedFile = dm.openDownloadedFile(downloadID);
+                                        FileInputStream fis = new FileInputStream(downloadedFile.getFileDescriptor());
 
-                                try {
-                                    // Get file from Download Manager (which is a system service as explained in the onCreate)
-                                    file = dm.openDownloadedFile(downloadID);
-                                    FileInputStream fis = new FileInputStream(file.getFileDescriptor());
+                                        // Convert file to string
+                                        String jsonStr = null;
+                                        try {
+                                            FileChannel fc = fis.getChannel();
+                                            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
-                                    // YOUR CODE HERE [convert file to String here]
+                                            jsonStr = Charset.defaultCharset().decode(bb).toString();
+                                        } finally {
+                                            fis.close();
+                                        }
+                                        Log.d(TAG, "JSON String downloaded: " + jsonStr);
+                                        Boolean JSONisValid = isJSONValid(jsonStr);
 
+                                        // Write string to data/questions.json if it's valid JSON
+                                        if (JSONisValid) {
+                                            try {
+                                                Log.i(TAG, "writing downloaded json string to file");
 
+                                                File file = new File(getFilesDir().getAbsolutePath(), "questions.json");
+                                                FileOutputStream fos = new FileOutputStream(file, false);
+                                                fos.write(jsonStr.getBytes());
+                                                fos.close();
+                                            } catch (IOException e) {
+                                                Log.e("Exception", "File write failed: " + e.toString());
+                                            }
 
-                                    // YOUR CODE HERE [write string to data/data.json]
-                                    //      [hint, i wrote a writeFile method in MyApp... figure out how to call that from inside this Activity]
-
-                                    // convert your json to a string and echo it out here to show that you did download it
-
-
-
-                                    /*
-                                    String jsonString = ....myjson...to string().... chipotle burritos.... blah
-                                    Log.i("MyApp - Here is the json we download:", jsonString);
-                                    */
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                break;
-                            case DownloadManager.STATUS_FAILED:
-                                // YOUR CODE HERE! Your download has failed! Now what do you want it to do? Retry? Quit application? up to you!
-                                break;
+                                            JSONArray jsonArray = new JSONArray(jsonStr);
+                                            QuizApp.getInstance().getRepository().processJSON(jsonArray);
+                                        } else {
+                                            Log.d(TAG, "Invalid JSON");
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
+                                case DownloadManager.STATUS_FAILED:
+                                    Log.d(TAG, "Download Status - Failed");
+                                    Intent dialogIntent = new Intent(getApplicationContext(), DialogActivity.class);
+                                    dialogIntent.putExtra("reason", "download failed");
+                                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    getApplicationContext().startActivity(dialogIntent);
+                                    break;
+                            }
                         }
+                    } finally {
+                        c.close();
                     }
+
+                } else {
+                    Log.d(TAG + " Download", "Received ID " + id + " but download ID is " + downloadID);
                 }
+
             }
         }
     };
+
+    public boolean isJSONValid(String test) {
+        try {
+            new JSONObject(test);
+        } catch (JSONException ex) {
+            try {
+                new JSONArray(test);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public void onBackPressed() {
@@ -160,6 +216,12 @@ public class MainActivity extends ActionBarActivity {
             return rowView;
 
         }
+
+        public void replaceData(List<String> newTopics ) {
+            topicList.clear();
+            topicList = newTopics;
+            this.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -189,7 +251,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "OnDestroy called..un-registering receivers.");
 
         unregisterReceiver(downloadReceiver);
         unregisterReceiver(alarmReceiver);
