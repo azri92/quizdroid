@@ -1,7 +1,10 @@
 # QuizDroid
 INFO 498 Android Development | Homework 6
 
-An application that will allow users to take multiple-choice quizzes
+An application that will allow users to take multiple-choice quizzes.
+
+## NOTE
+This assignment has 5 parts, each in its own branch (Parts 1-5).
 
 # PART 1
 ## Stories
